@@ -1,0 +1,114 @@
+package com.app.utils;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.*;
+import com.Custom_Exception.*;
+import com.app.core.*;
+
+public class CMSValidations {
+
+	public static void checkForDuplicateCustomer(String email, List<Customer> customerList) throws CustomException {
+		Customer newCust = new Customer(email);
+
+		if (customerList.contains(newCust))
+			throw new CustomException("Duplicate Email !!!");
+	}
+
+	// add a method to parseAndValidate plan and it's charges
+	public static ServicePlans parseAndValidatePlanAndCharges(String plan, double regAmount) throws CustomException {
+		ServicePlans sp = ServicePlans.valueOf(plan.toUpperCase());
+
+		if (sp.getPlanCost() == regAmount) {
+			return sp;
+		}
+		throw new CustomException("Reg amount doesn't match with chosen plan");
+
+	}
+
+	public static ServicePlans parseAndValidatePlans(String servicePlan, List<Customer> account) throws CustomException 
+	{
+
+
+		for (ServicePlans s : ServicePlans.values()) {
+			if (s.name().equalsIgnoreCase(servicePlan)) {
+				
+				return s;
+			}
+			
+		}
+		throw new CustomException("Invalid Service Plan");
+	}
+	// add a method to validate all i/ps
+
+	public static Customer validateCustomerInputs(String fname, String lname, String email, String password, String dob,
+			String sp, double registrationAmount, List<Customer> customers) throws CustomException {
+		checkForDuplicateCustomer(email, customers);
+		// validatePassword(password);
+		LocalDate d = parsingAndValidateDob(dob);
+		ServicePlans s = parseAndValidatePlanAndCharges(sp, registrationAmount);
+		return new Customer(fname, lname, email, password, d, s, registrationAmount);
+
+	}
+
+	public static LocalDate parseDate(String dob) {
+		return LocalDate.parse(dob);
+	}
+
+	public static LocalDate parseAndValidateDate(String dob, List<Customer> account) throws CustomException {
+		LocalDate d = LocalDate.parse(dob);
+		Customer c = new Customer(d);
+		if (account.contains(c)) {
+			return d;
+		}
+		throw new CustomException("Invalid Date OF Birth");
+	}
+
+	public static Customer SignIn(String email, String password, List<Customer> customerList) throws CustomException {
+
+		Customer nEmail = new Customer(email);
+		int index = customerList.indexOf(nEmail);
+		if (index != -1) {
+			if (((customerList.get(index)).getPassword()).equals(password)) {
+				System.out.println("Signed in successful");
+				return customerList.get(index);
+			} else {
+				throw new CustomException("Invalid password");
+			}
+
+		} else {
+			throw new CustomException("Invalid EmailID");
+		}
+
+	}
+
+	public static void validatePassword(String password) throws CustomException {
+		Customer c = new Customer(password);
+		if (!(password.matches("((?=.*\\d)(?=.*[a-z])(?=.*[#@$*]).{5,20})"))) {
+			throw new CustomException("Password is invalid");
+		}
+
+	}
+
+	public static LocalDate parsingAndValidateDob(String dob) throws CustomException {
+
+		LocalDate d = parseDate(dob);
+		int years = (Period.between(d, LocalDate.now())).getYears();
+
+		if (years >= 21)
+			return d;
+		throw new CustomException("Age is not valid");
+	}
+
+	public static boolean parsingAndValidateDobByYears(LocalDate dob) {
+
+		// LocalDate d = parseDate(dob);
+		int years = (Period.between(dob, LocalDate.now())).getYears();
+
+		if (years >= 21)
+			return true;
+		return false;
+
+	}
+
+}

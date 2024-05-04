@@ -1,0 +1,138 @@
+package com.app.tester;
+import java.util.*;
+import static com.app.utils.CustomerUtils.*;
+import static com.app.utils.CMSValidations.*;
+import com.app.core.Customer;
+import java.util.Collections;
+import java.util.Comparator;
+import Custom_Sorting.CustomerDobLastNameComparator;
+
+public class CMSApplication {
+
+
+		public static void main(String[] args) {
+			try(Scanner sc= new Scanner (System.in))
+			{
+				boolean exit = false;
+				
+				List<Customer>customerList= populatedCustomerAccounts();
+				
+				
+				
+				while(!exit)
+				{
+					System.out.println("Enter your choice: 1.Sign Up to create an account 2.Sign In 3.Display Details 0.Exit");
+					try
+					{
+						switch(sc.nextInt())
+						{
+						case 1:
+							//Sign Up
+							
+							System.out.println("Enter FirstName,LastName,EmailID,Password,DateOfBirth");
+							System.out.println("Enter the service plan which you want to take and RegistrationAmount,: SILVER-Registrationamt(1000 RS),GOLD-Regstrationamt(2000 RS),DIAMOND-Regstrationamt(5000 RS),PLATINUM-Regstrationamt(10000 RS)");
+							
+							Customer customer = validateCustomerInputs(sc.next(),sc.next(),sc.next(),sc.next(),sc.next(),sc.next(),sc.nextDouble(),customerList);
+							 customerList.add(customer);
+							
+							System.out.println("A/c created !");
+							
+							
+							break;
+							
+						case 2:
+							// Sign in 
+							System.out.println("Enter your email and password");
+						    Customer c1 = SignIn(sc.next(),sc.next(),customerList);
+						    System.out.println(c1);
+							
+								
+							
+							break;
+							
+							
+						case 3:
+							//Display details
+							
+							for(Customer c : customerList)
+							{
+								int index=customerList.indexOf(c);
+								if(index != -1)
+								{
+									System.out.println(customerList.get(index));
+								}
+								
+							}
+							
+							break;
+							
+						case 4://Change Password
+							System.out.println("Enter your email and password");
+							Customer c2 = SignIn(sc.next(),sc.next(),customerList);
+						    System.out.println("Enter your New password");
+							c2.setPassword(sc.next());
+							System.out.println("Reset New password"+c2.getPassword());
+							break;
+							
+						case 5://Unsubscribe Account
+							System.out.println("Enter EmailID");
+							removeCustomer(sc.next(),customerList);
+							break;
+							
+						case 6:
+						//2.1 Display customer details sorted as per the email (asc) : using natural ordering
+                        Collections.sort(customerList);
+							break;
+							
+						case 7:
+						//2.2 Display customer details sorted as per the dob n last name  : using custom ordering , using anonymous inner class.
+							//Collections.sort(customerList, new CustomerDobLastNameComparator());
+							Collections.sort(customerList, new Comparator<Customer>() {
+
+								@Override
+								public int compare(Customer c1,Customer c2)
+								{
+									int value=(c1.getDob()).compareTo(c2.getDob());
+									
+									if(value == 0)
+									{
+										
+											return (c1.getLastName()).compareTo(c2.getLastName());
+										
+									}
+									return value;
+								}
+								
+							});
+							break;
+							
+						case 8:
+							/*Remove all customer details from specified plan born after specified date.
+							i/p : plan n date*/
+							
+							System.out.println("Enter dob and Service Plan");
+							removeCustomerDetails(sc.next(),sc.next(),customerList);
+							break;
+							
+						case 0:
+							exit=true;
+							break;
+							 
+						}
+					}
+					catch(Exception e)
+					{
+						System.out.println(e);
+					}
+				}
+			}
+		}
+
+		
+
+		
+		
+
+	
+
+}

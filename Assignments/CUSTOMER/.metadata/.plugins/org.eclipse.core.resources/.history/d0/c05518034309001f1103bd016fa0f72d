@@ -1,0 +1,99 @@
+package com.app.utils;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import com.Custom_Exception.CustomException;
+import com.app.core.Customer;
+import com.app.core.ServicePlans;
+
+public class CustomerUtils {
+public static List<Customer> populatedCustomerAccounts()
+{
+	Customer c1=new Customer("Divya","Unkule","d@123","q@we",LocalDate.parse("2000-06-14"),ServicePlans.SILVER,1000.00);
+
+Customer c2=new Customer("Aishwarya","Unkule","a@123","z@xc",LocalDate.parse("1996-02-13"),ServicePlans.GOLD,2000.00);
+
+
+Customer c3=new Customer("Dipak","Unkule","di@123","a@sd",LocalDate.parse("1966-09-14"),ServicePlans.DIAMOND,5000.00);
+
+
+Customer c4=new Customer("Chhaya","Unkule","c@123","c@vb",LocalDate.parse("1968-08-22"),ServicePlans.PLATINUM,10000.00);
+
+
+Customer c5=new Customer("Swayam","Rahane","s@123","s@df",LocalDate.parse("2001-12-31"),ServicePlans.SILVER,1000.00);
+
+
+Customer c6=new Customer("Rahi","Raut","r@123","r@ty",LocalDate.parse("2002-06-14"),ServicePlans.GOLD,2000.00);
+
+
+Customer c7=new Customer("Aaroh","Dixit","aa@123","d@fg",LocalDate.parse("2000-06-14"),ServicePlans.DIAMOND,5000.00);
+
+
+Customer c8=new Customer("Rama","Bakshi","ra@123","b@nm",LocalDate.parse("2000-07-16"),ServicePlans.PLATINUM,10000.00);
+
+
+Customer c9=new Customer("Ronny","Batliwala","ro@123","r@bn",LocalDate.parse("2002-08-08"),ServicePlans.SILVER,1000.00);
+
+
+Customer c10=new Customer("Shravani","Ambavale","sh@123","j@kl",LocalDate.parse("2004-10-05"),ServicePlans.GOLD,2000.00);
+
+Customer[] accts = { c1,c2,c3,c4,c5,c6,c7,c8,c9,c10};
+       List<Customer> list=new ArrayList<> ();
+       
+       for(Customer c: accts)
+       {
+    	   list.add(c);
+       }
+       
+       return list;
+       
+}
+
+public static void removeCustomer(String email,List<Customer>account)throws CustomException
+{
+	Customer c=new Customer(email);
+	
+	int index=account.indexOf(c);
+	
+	if(index != -1)
+	{
+		System.out.println("Removed Account is: "+(account.remove(index)).getFirstName());
+		
+	}
+	else
+	{
+		throw new CustomException("Email ID is invalid");
+	}
+}
+
+
+public static void removeCustomerDetails(String dob,String servicePlan,List<Customer>account) throws CustomException
+{
+    
+	LocalDate cDob= parseDate(dob);
+	ServicePlans sp= parseAndValidatePlans(servicePlan,account);
+	
+	Iterator<Customer>custItr=account.iterator();
+	
+	if(custItr.hasNext())
+	{
+		Customer c = custItr.next();
+		if(c.getServicePlan().equals(sp) && c.getDob().isAfter(cDob))
+		{
+			custItr.remove();
+			System.out.println("Removed Account is: "+(c.getFirstName()));
+			
+		}
+	}
+	
+	
+}
+	
+}
+
+
+
+
